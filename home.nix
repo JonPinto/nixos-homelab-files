@@ -6,10 +6,10 @@
     skibidi = "git add . && sudo nixos-rebuild switch --flake .#nixos";
     gitout = "git add . && sudo nixos-rebuild switch --flake .#nixos && git commit -m 'sum new sauce'";
   };
-  
-  home.packages = [ 
-    pkgs.atool 
-    pkgs.httpie 
+
+  home.packages = [
+    pkgs.atool
+    pkgs.httpie
     pkgs.htop
     pkgs.wget
   ];
@@ -20,8 +20,9 @@
     enable = true;
     userName = "jonpinto";
     userEmail = "yonatanpinto1@gmail.com";
-
     extraConfig = {
+      credential.helper = "${pkgs.git-credential-manager}/bin/git-credential-manager";
+      credential.credentialStore = "secretservice";
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
     };
