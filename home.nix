@@ -22,7 +22,7 @@
     userEmail = "yonatanpinto1@gmail.com";
     extraConfig = {
       credential.helper = "${pkgs.git-credential-manager}/bin/git-credential-manager";
-      credential.credentialStore = "secretservice";
+      credential.credentialStore = "gpg";
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
     };
