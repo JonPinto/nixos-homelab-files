@@ -7,6 +7,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./avahi.nix
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -19,7 +20,19 @@
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking = {
+    hostName = "nixos";
+    networkmanager.enable = true;
+    # Set the static IP for your specific card
+    interfaces.enp2s0f0.ipv4.addresses = [{
+      address = "10.0.0.99";
+      prefixLength = 24;
+    }];
+    # your router's IP
+    defaultGateway = "10.0.0.138";
+    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  };
+
   # networking.wireless.enable = false;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -28,7 +41,6 @@
 
   # Enable networking
   # networking.firewall.allowPing = true;
-  networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "Asia/Jerusalem";
@@ -81,17 +93,37 @@
     podman-compose
   # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   ];
-  
+
+  #podman
   virtualisation = {
     podman = {
       enable = true;
       dockerCompat = true;
+      dockerSocket.enable = true;
       defaultNetwork.settings.dns_enabled = true; # Required for containers under podman-compose to be able to talk to each other.
     };
   };
 
-  networking.firewall.interfaces."podman*".allowedUDPPorts = [ 53 5353 ];
+  virtualisation.oci-containers.containers."dockge" = {
+    image = "louislam/dockge:1";
+    autoStart = true;
+    ports = [ "5001:5001" ];
+    volumes = [
+      "/run/podman/podman.sock:/var/run/docker.sock"
+      "/opt/dockge:/app/data"
+      "/opt/stacks:/opt/stacks"
+    ];
+    environment = {
+      DOCKGE_STACKS_DIR = "/opt/stacks";
+    };
+  };
 
+  fileSystems."/var/lib/stacks/glance" = {
+    device = "/home/jonpinto/nix-config/.dotfiles/glance";
+    options = [ "bind" ];
+  };
+
+  systemd.sockets.podman.wantedBy = [ "sockets.target" ];
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -104,12 +136,15 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ 22 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  networking.firewall.enable = true;
+  networking.firewall = {
+      enable = true;
+      allowedTCPPorts = [ 22 53 80 81 443 3923 3010 ];
+      allowedUDPPorts = [ 53 5353 ];
+      interfaces."podman*".allowedUDPPorts = [ 53 5353 ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
