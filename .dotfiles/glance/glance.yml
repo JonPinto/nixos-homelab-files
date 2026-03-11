@@ -38,16 +38,19 @@ pages:
                   title: Stuff
                   sites:
                       - title: DockGE
-                        url: http://10.0.0.99:5001
+                        url: https://pod.jonpintolab.duckdns.org
                         icon: /assets/DockGE-logo.png
                       - title: Immich
-                        url: http://10.0.0.99:2283
+                        url: https://photos.jonpintolab.duckdns.org
                         icon: /assets/immich-logo.png
                       - title: Copyparty
                         url: http://10.0.0.99:3923
                         icon: /assets/immich-logo.png
                       - title: Affine
-                        url: http://10.0.0.99:3010
+                        url: https://note.jonpintolab.duckdns.org
+                        icon: /assets/immich-logo.png
+                      - title: Nginx Proxy Manager
+                        url: https://proxy.jonpintolab.duckdns.org
                         icon: /assets/immich-logo.png
                 - type: custom-api
                   title: Astronomy Picture of the Day
