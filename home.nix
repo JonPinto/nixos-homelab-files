@@ -1,8 +1,6 @@
 { pkgs, ... }: {
   home.shellAliases = {
-    # check containers
     psa = "podman ps -a";
-    # view DweebUI logs
     skibidi = "git add . && sudo nixos-rebuild switch --flake .#nixos";
     gitout = "git add . && sudo nixos-rebuild switch --flake .#nixos && git commit -m 'sum new sauce'";
   };
