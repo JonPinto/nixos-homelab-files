@@ -1,0 +1,7 @@
+keys:
+    - &admin_key age13za0hpe0wa7xtz0kmvnl7v6kngfe56x2tfhpe69fzcq7l2k43c2sqjwzrh # Paste your public key here
+creation_rules:
+    - path_regex: secrets/.*\.yaml$
+      key_groups:
+          - age:
+                - *admin_key

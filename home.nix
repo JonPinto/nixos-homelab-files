@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, config, inputs, ... }: {
   home.shellAliases = {
     psa = "podman ps -a";
     skibidi = "git add . && sudo nixos-rebuild switch --flake .#nixos";
@@ -14,11 +14,21 @@
 
   programs.bash.enable = true;
 
+  #secrets
+  sops = {
+    defaultSopsFile = ./secrets/git-secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/home/jonpinto/.config/sops/age/keys.txt";
+    secrets.github_token = {
+    };
+  };
+
   programs.git = {
     enable = true;
     userName = "jonpinto";
     userEmail = "yonatanpinto1@gmail.com";
     extraConfig = {
+      credential.helper = "!f() { echo \"password=$(cat ${config.sops.secrets.github_token.path})\"; }; f";
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
     };
